@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Yogesh Suryawanshi - Social Links</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root{
+      --bg-primary:#F0F4FF; --bg-secondary:#FFFFFF; --text-primary:#0F172A;
+      --text-secondary:#475569; --accent-primary:#7C3AED; --accent-secondary:#6366F1;
+      --card-bg: rgba(255,255,255,0.7); --border-color: rgba(124,58,237,0.2);
+      --shadow: rgba(124,58,237,0.1);
+    }
+    [data-theme="dark"]{
+      --bg-primary:#0F172A; --bg-secondary:#1E293B; --text-primary:#F1F5F9;
+      --text-secondary:#CBD5E1; --accent-primary:#A78BFA; --accent-secondary:#818CF8;
+      --card-bg: rgba(30,41,59,0.7); --border-color: rgba(167,139,250,0.2); --shadow: rgba(167,139,250,0.2);
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background .3s, color .3s;
+      position: relative;
+    }
+
+    #particles-canvas { position: fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+
+    .container { max-width:800px; margin:0 auto; padding:20px; position:relative; z-index:1; }
+
+    .header { text-align:center; padding:40px 20px; opacity:0; animation:fadeInDown .8s ease forwards; }
+    @keyframes fadeInDown { from {opacity:0; transform: translateY(-30px)} to {opacity:1; transform:translateY(0)} }
+
+    .profile-photo {
+      width:120px; height:120px; border-radius:50%;
+      margin:0 auto 20px; background: linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));
+      display:flex; align-items:center; justify-content:center;
+      box-shadow: 0 8px 32px var(--shadow); border:4px solid var(--card-bg);
+      overflow: hidden;
+    }
+    .profile-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+
+    h1 {
+      font-size:2.5rem; margin-bottom:10px;
+      background: linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .tagline { color:var(--text-secondary); font-size:1.1rem; margin-bottom:20px; }
+
+    .controls { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:30px; }
+    .btn {
+      padding:10px 20px; border-radius:12px; border:1px solid var(--border-color);
+      background:var(--card-bg); backdrop-filter: blur(10px); color:var(--text-primary);
+      cursor:pointer; display:flex; align-items:center; gap:8px; transition:all .3s; font-size:.95rem;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--shadow); border-color:var(--accent-primary); }
+
+    .search-bar { width:100%; max-width:500px; margin:0 auto 40px; position:relative; opacity:0; animation:fadeIn .8s .2s forwards; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .search-bar input {
+      width:100%; padding:15px 20px; border-radius:16px; border:1px solid var(--border-color);
+      background:var(--card-bg); backdrop-filter: blur(10px); color:var(--text-primary); font-size:1rem;
+    }
+    .search-bar input:focus { outline:none; border-color:var(--accent-primary); box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+
+    .section { margin-bottom:40px; opacity:0; transform:translateY(30px); transition:all .6s; }
+    .section.visible { opacity:1; transform:translateY(0); }
+    .section-title { font-size:1.5rem; margin-bottom:20px; padding-left:10px; border-left:4px solid var(--accent-primary); }
+
+    .links-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap:20px; }
+    .featured-grid { grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); }
+
+    .social-card {
+      background:var(--card-bg); backdrop-filter: blur(10px); border:1px solid var(--border-color);
+      border-radius:16px; padding:24px; text-align:center; cursor:pointer; transition:all .3s;
+      position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center;
+    }
+    .social-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 12px 40px var(--shadow); border-color:var(--accent-primary); }
+
+    .social-icon { width:50px; height:50px; margin-bottom:12px; transition:transform .3s; object-fit:contain; display:block; }
+    .social-card:hover .social-icon { transform: scale(1.1) rotate(5deg); }
+
+    .social-name { font-weight:600; margin-bottom:8px; color:var(--text-primary); }
+    .social-handle { font-size:.85rem; color:var(--text-secondary); margin-bottom:12px; }
+
+    .copy-btn { padding:6px 12px; background:var(--accent-primary); color:#fff; border:none; border-radius:8px; cursor:pointer; transition:all .3s; font-size:.8rem; }
+    .copy-btn:hover { transform: scale(1.05); background:var(--accent-secondary); }
+    .copy-btn.copied { background:#10B981; }
+
+    .tooltip { position:absolute; top:-40px; left:50%; transform:translateX(-50%); background:var(--text-primary); color:var(--bg-primary); padding:6px 12px; border-radius:8px; font-size:.85rem; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .3s; }
+    .social-card:hover .tooltip { opacity:1; }
+
+    .footer { text-align:center; padding:40px 20px; margin-top:60px; }
+    .visitor-counter { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; background:var(--card-bg); border-radius:12px; margin-bottom:20px; border:1px solid var(--border-color); }
+    .qr-section { margin-top:30px; text-align:center; }
+    .qr-code { display:inline-block; padding:20px; background:white; border-radius:16px; margin-top:15px; }
+
+    .theme-toggle { position:relative; width:60px; height:30px; background:var(--card-bg); border-radius:15px; cursor:pointer; border:1px solid var(--border-color); }
+    .theme-toggle::before {
+      content:'🌙'; position:absolute; top:50%; left:4px; transform:translateY(-50%); width:22px; height:22px;
+      background:var(--accent-primary); border-radius:50%; display:flex; align-items:center; justify-content:center; transition:all .3s; font-size:12px;
+    }
+    [data-theme="dark"] .theme-toggle::before { content:'☀️'; left:34px; }
+
+    @media (max-width:768px){ h1{font-size:2rem} .links-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:15px} .featured-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));} .social-card{padding:20px} }
+    @media (max-width:480px){ .links-grid,.featured-grid{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+  <div class="container">
+    <header class="header" role="banner">
+      <div class="profile-photo" aria-hidden="false">
+        <img src="assets/profile_pic.jpg" alt="Yogesh Suryawanshi profile photo">
+      </div>
+      <h1>Yogesh Suryawanshi</h1>
+      <p class="tagline">Digital Creator | Developer | Content Enthusiast</p>
+
+      <div class="controls" role="toolbar" aria-label="Profile controls">
+        <div class="theme-toggle" id="themeToggle" role="button" aria-pressed="false" title="Toggle theme"></div>
+        <button class="btn" id="shareBtn" aria-label="Share profile">📤 Share Profile</button>
+        <button class="btn" id="qrBtn" aria-label="View QR code">📱 View QR Code</button>
+        <button class="btn" id="contactBtn" aria-label="Contact me">✉️ Contact Me</button>
+      </div>
+    </header>
+
+    <div class="search-bar" role="search">
+      <input type="text" id="searchInput" placeholder="🔍 Search platforms..." aria-label="Search platforms">
+    </div>
+
+    <section class="section" id="featured-section" aria-labelledby="featured-title">
+      <h2 class="section-title" id="featured-title">⭐ Featured Platforms</h2>
+      <div class="links-grid featured-grid" id="featured-links"></div>
+    </section>
+
+    <section class="section" id="professional-section" aria-labelledby="professional-title">
+      <h2 class="section-title" id="professional-title">💼 Professional</h2>
+      <div class="links-grid" id="professional-links"></div>
+    </section>
+
+    <section class="section" id="social-section" aria-labelledby="social-title">
+      <h2 class="section-title" id="social-title">🌐 Social</h2>
+      <div class="links-grid" id="social-links"></div>
+    </section>
+
+    <section class="section" id="creative-section" aria-labelledby="creative-title">
+      <h2 class="section-title" id="creative-title">🎨 Creative & Entertainment</h2>
+      <div class="links-grid" id="creative-links"></div>
+    </section>
+
+    <footer class="footer" role="contentinfo">
+      <div class="visitor-counter">👁️ <span id="visitor-count">1,234</span> visitors</div>
+
+      <div class="qr-section" id="qr-section">
+        <h3>Scan to Visit</h3>
+        <div class="qr-code" id="qr-code" aria-hidden="false"></div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // ---------- Data ----------
+    const platforms = {
+      featured: [
+        { name: 'Instagram', handle: '@_mr._.yog_', url: 'https://instagram.com/_mr._.yog_', icon: 'assets/instagram.png' },
+        { name: 'LinkedIn', handle: '/in/yog9970', url: 'https://linkedin.com/in/yog9970', icon: 'assets/linkedin.png' },
+        { name: 'GitHub', handle: '@mr-yog', url: 'https://github.com/mr-yog', icon: 'assets/github.png' }
+      ],
+      professional: [
+        { name: 'Medium', handle: '@yogeshsuryawanshi023', url: 'https://medium.com/@yogeshsuryawanshi023', icon: 'assets/medium.png' },
+        { name: 'Behance', handle: 'yogeshsuryawa12', url: 'https://behance.net/yogeshsuryawa12', icon: 'assets/behance.png' },
+        { name: 'LinkedIn', handle: '/in/yog9970', url: 'https://linkedin.com/in/yog9970', icon: 'assets/linkedin.png' }
+      ],
+      social: [
+        { name: 'Instagram', handle: '@_mr._.yog_', url: 'https://instagram.com/_mr._.yog_', icon: 'assets/instagram.png' },
+        { name: 'Facebook', handle: 'profile', url: 'https://facebook.com/profile.php?id=100028231425698', icon: 'assets/facebook.png' },
+        { name: 'Twitter/X', handle: '@Yogi_2242', url: 'https://twitter.com/Yogi_2242', icon: 'assets/twitter.png' },
+        { name: 'Snapchat', handle: '@mr.yog67', url: 'https://snapchat.com/add/mr.yog67', icon: 'assets/snapchat.png' },
+        { name: 'Threads', handle: '@_mr._.yog_', url: 'https://threads.net/@_mr._.yog_', icon: 'assets/threads.png' }
+      ],
+      creative: [
+        { name: 'Pinterest', handle: 'mr_yog_36', url: 'https://pinterest.com/mr_yog_36/', icon: 'assets/pinterest.png' },
+        { name: 'YouTube', handle: '@yogeshsuryawanshi7306', url: 'https://youtube.com/@yogeshsuryawanshi7306', icon: 'assets/youtube.png' },
+        { name: 'Spotify', handle: 'Yogesh Suryawanshi', url: 'https://open.spotify.com/user/31krk7ax5egbpoayp6h6rkyp7rly', icon: 'assets/spotify.png' },
+        { name: 'SoundCloud', handle:'yogesh', url:'https://soundcloud.com/yogesh-suryawanshi-935569164', icon:'assets/soundcloud.png' }
+      ]
+    };
+
+    // ---------- Helpers ----------
+    function createSocialCard(platform) {
+      const card = document.createElement('div');
+      card.className = 'social-card';
+      card.setAttribute('data-platform', platform.name.toLowerCase());
+      card.setAttribute('data-handle', platform.handle.toLowerCase());
+      card.role = 'link';
+      card.tabIndex = 0;
+
+      // open on click/enter
+      card.addEventListener('click', () => window.open(platform.url, '_blank'));
+      card.addEventListener('keydown', (e) => { if (e.key === 'Enter') window.open(platform.url, '_blank'); });
+
+      // icon
+      const img = document.createElement('img');
+      img.className = 'social-icon';
+      img.src = platform.icon;
+      img.alt = platform.name + ' icon';
+      card.appendChild(img);
+
+      // name & handle
+      const name = document.createElement('div');
+      name.className = 'social-name';
+      name.textContent = platform.name;
+      card.appendChild(name);
+
+      const handle = document.createElement('div');
+      handle.className = 'social-handle';
+      handle.textContent = platform.handle;
+      card.appendChild(handle);
+
+      // copy button
+      const btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.type = 'button';
+      btn.textContent = 'Copy Link';
+      btn.setAttribute('aria-label', `Copy ${platform.name} link`);
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        copyLink(platform.url, btn);
+      });
+      card.appendChild(btn);
+
+      return card;
+    }
+
+    function initializePlatforms() {
+      Object.keys(platforms).forEach(sectionKey => {
+        const container = document.getElementById(`${sectionKey}-links`);
+        container.innerHTML = '';
+        platforms[sectionKey].forEach(p => {
+          const card = createSocialCard(p);
+          container.appendChild(card);
+        });
+      });
+    }
+
+    function copyLink(url, buttonEl) {
+      if (!navigator.clipboard) {
+        // fallback
+        const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch(e) {}
+        ta.remove();
+        showCopyState(buttonEl);
+        return;
+      }
+      navigator.clipboard.writeText(url).then(() => showCopyState(buttonEl)).catch(() => {
+        // ignore error, but show feedback
+        showCopyState(buttonEl);
+      });
+    }
+
+    function showCopyState(buttonEl) {
+      const orig = buttonEl.textContent;
+      buttonEl.textContent = '✓ Copied!';
+      buttonEl.classList.add('copied');
+      setTimeout(() => { buttonEl.textContent = orig; buttonEl.classList.remove('copied'); }, 1800);
+    }
+
+    // Search / filter
+    function filterPlatforms() {
+      const term = document.getElementById('searchInput').value.trim().toLowerCase();
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(section => {
+        const cards = section.querySelectorAll('.social-card');
+        let visibleAny = false;
+        cards.forEach(card => {
+          const name = card.getAttribute('data-platform') || '';
+          const handle = card.getAttribute('data-handle') || '';
+          const match = term === '' || name.includes(term) || handle.includes(term);
+          card.style.display = match ? 'flex' : 'none';
+          if (match) visibleAny = true;
+        });
+        section.style.display = visibleAny ? 'block' : 'none';
+      });
+    }
+
+    // Theme toggle (persist)
+    function applyInitialTheme() {
+      const saved = localStorage.getItem('site-theme');
+      if (saved) document.documentElement.setAttribute('data-theme', saved);
+      else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme','dark');
+      } else {
+        document.documentElement.setAttribute('data-theme','light');
+      }
+      // update aria-pressed
+      const toggle = document.getElementById('themeToggle');
+      toggle.setAttribute('aria-pressed', document.documentElement.getAttribute('data-theme') === 'dark');
+    }
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', current);
+      localStorage.setItem('site-theme', current);
+      document.getElementById('themeToggle').setAttribute('aria-pressed', current === 'dark');
+    }
+
+    // Share / contact / qr
+    function shareProfile() {
+      const url = window.location.href;
+      if (navigator.share) {
+        navigator.share({ title: 'Yogesh Suryawanshi - Social Links', text: 'Connect with me', url }).catch(()=>{/* ignore */});
+      } else {
+        navigator.clipboard?.writeText(url).then(()=> alert('Profile link copied to clipboard.'));
+      }
+    }
+    function showContact() { window.location.href = 'mailto:yogeshsuryawanshi023@gmail.com'; }
+    function scrollToQR() { document.getElementById('qr-section').scrollIntoView({ behavior:'smooth' }); }
+
+    function generateQRCode() {
+      const qrContainer = document.getElementById('qr-code');
+      const data = encodeURIComponent(window.location.href);
+      qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${data}" width="200" height="200" alt="QR code to this page">`;
+    }
+
+    // Particles
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext && canvas.getContext('2d');
+    let particles = [];
+    function initParticles(count = 50) {
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+      particles = [];
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 3 + 1,
+          sx: Math.random() * 0.5 - 0.25,
+          sy: Math.random() * 0.5 - 0.25
+        });
+      }
+    }
+    function animateParticles() {
+      if (!ctx) return;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      for (const p of particles) {
+        p.x += p.sx; p.y += p.sy;
+        if (p.x < 0) p.x = canvas.width; if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height; if (p.y > canvas.height) p.y = 0;
+        ctx.fillStyle = dark ? 'rgba(167,139,250,0.22)' : 'rgba(124,58,237,0.22)';
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    window.addEventListener('resize', () => { canvas.width = innerWidth; canvas.height = innerHeight; });
+
+    // IntersectionObserver reveals
+    function initObservers() {
+      const sections = document.querySelectorAll('.section');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+      }, { threshold: 0.12 });
+      sections.forEach(s => observer.observe(s));
+    }
+
+    // Visitor count (simulated)
+    function updateVisitorCount() {
+      const count = Math.floor(Math.random() * 5000) + 1000;
+      document.getElementById('visitor-count').textContent = count.toLocaleString();
+    }
+
+    // ---------- Init on DOM ready ----------
+    document.addEventListener('DOMContentLoaded', () => {
+      applyInitialTheme();
+      initializePlatforms();
+      generateQRCode();
+      updateVisitorCount();
+      initParticles();
+      animateParticles();
+      initObservers();
+
+      // wire up UI buttons
+      document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+      document.getElementById('shareBtn').addEventListener('click', shareProfile);
+      document.getElementById('qrBtn').addEventListener('click', scrollToQR);
+      document.getElementById('contactBtn').addEventListener('click', showContact);
+      document.getElementById('searchInput').addEventListener('input', filterPlatforms);
+
+      // initial filter run so sections hide if empty
+      filterPlatforms();
+    });
+  </script>
+</body>
+</html>
