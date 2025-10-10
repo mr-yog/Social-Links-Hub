@@ -6,8 +6,7 @@ It includes my professional and social profiles, QR code access, and dynamic UI 
 ---
 
 ## 🚀 Live Demo  
-🔗 **[Visit My Portfolio](https://mr-yog.github.io/portfolio/)**  
-*(Replace this link with your actual GitHub Pages URL once deployed)*
+🔗 **[Visit My Portfolio](https://mr-yog.github.io/Social-Links-Hub/)**  
 
 ---
 
